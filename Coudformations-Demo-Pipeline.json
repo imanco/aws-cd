@@ -1,0 +1,455 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "This Script will create a new VPC with a single instaance of TAS running",
+  "Parameters": {
+    "TagValue1": {
+      "Description": "The Project Name",
+      "Type": "String"
+    },
+    "TagValue2": {
+      "Description": "The Name of Environment",
+      "Type": "String",
+      "AllowedValues": [
+        "Development",
+        "Staging",
+        "Production"
+      ]
+    },
+    "CIDR": {
+      "Description": "CIDR address block for the new VPC",
+      "Type": "String",
+      "Default": "10.60.0.0/16"
+    },
+    "InstancePrivateIpAddress": {
+      "Description": "CIDR address block for the new VPC",
+      "Type": "String",
+      "Default": "10.60.5.122"
+    },
+    "PublicCidrBlock1": {
+      "Description": "The IP address range for Public Subnet 1",
+      "Type": "String",
+      "Default": "10.60.5.0/24"
+    },
+    "PublicCidrBlock2": {
+      "Description": "The IP address range for Public Subnet 2",
+      "Type": "String",
+      "Default": "10.60.10.0/24"
+    },
+    "PrivateCidrBlock1": {
+      "Description": "The IP address range for Private Subnet 1",
+      "Type": "String",
+      "Default": "10.60.50.0/24"
+    },
+    "PrivateCidrBlock2": {
+      "Description": "The IP address range for Private Subnet 2",
+      "Type": "String",
+      "Default": "10.60.55.0/24"
+    }
+  },
+  "Resources":  {
+    "VPC": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": {
+          "Ref": "CIDR"
+        },
+        "InstanceTenancy": "default",
+        "EnableDnsSupport": "true",
+        "EnableDnsHostnames": "true",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "VPC-10.61"
+          },
+          {
+            "Key": "Project",
+            "Value": "New-VPC"
+          },
+          {
+            "Key": "Environment",
+            "Value": "Development"
+          }
+        ]
+      }
+    },
+    "subnet371afe6a": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": {
+          "Ref": "PrivateCidrBlock2"
+        },
+        "AvailabilityZone": "us-east-1b",
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "Tags": [
+          {
+            "Key": "Project",
+            "Value": "New-VPC"
+          },
+          {
+            "Key": "Name",
+            "Value": "PrivateSubnet2AZ"
+          },
+          {
+            "Key": "Environment",
+            "Value": "Development"
+          }
+        ]
+      }
+    },
+    "subnet76933e3d": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": {
+          "Ref": "PrivateCidrBlock1"
+        },
+        "AvailabilityZone": "us-east-1a",
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "PrivateSubnet1AZ"
+          },
+          {
+            "Key": "Environment",
+            "Value": "Development"
+          },
+          {
+            "Key": "Project",
+            "Value": "New-VPC"
+          }
+        ]
+      }
+    },
+    "subneta06682fd": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": {
+          "Ref": "PublicCidrBlock2"
+        },
+        "AvailabilityZone": "us-east-1b",
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "PublicSubnet2AZ"
+          },
+          {
+            "Key": "Project",
+            "Value": "New-VPC"
+          },
+          {
+            "Key": "Environment",
+            "Value": "Development"
+          }
+        ]
+      }
+    },
+    "subnet626dc029": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": {
+          "Ref": "PublicCidrBlock1"
+        },
+        "AvailabilityZone": "us-east-1a",
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "Tags": [
+          {
+            "Key": "Project",
+            "Value": "New-VPC"
+          },
+          {
+            "Key": "Environment",
+            "Value": "Development"
+          },
+          {
+            "Key": "Name",
+            "Value": "PublicSubnet1AZ"
+          }
+        ]
+      }
+    },
+    "igw718e2308": {
+      "Type": "AWS::EC2::InternetGateway",
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "Development"
+          },
+          {
+            "Key": "Name",
+            "Value": "InternetGateway"
+          },
+          {
+            "Key": "Project",
+            "Value": "New-VPC"
+          }
+        ]
+      }
+    },
+    "doptf47a9293": {
+      "Type": "AWS::EC2::DHCPOptions",
+      "Properties": {
+        "DomainName": "ec2.internal",
+        "DomainNameServers": [
+          "AmazonProvidedDNS"
+        ]
+      }
+    },
+    "aclec356694": {
+      "Type": "AWS::EC2::NetworkAcl",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "PublicNetworkAcl"
+          },
+          {
+            "Key": "Environment",
+            "Value": "Development"
+          },
+          {
+            "Key": "Network",
+            "Value": "Public"
+          },
+          {
+            "Key": "Project",
+            "Value": "New-VPC"
+          }
+        ]
+      }
+    },
+    "rtbdc8ce4a6": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "Development"
+          },
+          {
+            "Key": "Project",
+            "Value": "New-VPC"
+          },
+          {
+            "Key": "Name",
+            "Value": "PublicRouteTable"
+          },
+          {
+            "Key": "Network",
+            "Value": "Public"
+          }
+        ]
+      }
+    },
+    "instancei0dbe718c8cb1d697f": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "DisableApiTermination": "false",
+        "InstanceInitiatedShutdownBehavior": "stop",
+        "ImageId": "ami-0d74ae77",
+        "InstanceType": "t2.large",
+        "KeyName": "Teladoc-Prod-Key",
+        "Monitoring": "false",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "new-tas1"
+          }
+        ],
+        "NetworkInterfaces": [
+          {
+            "DeleteOnTermination": "true",
+            "Description": "Primary network interface",
+            "DeviceIndex": 0,
+            "SubnetId": {
+              "Ref": "subnet626dc029"
+            },
+            "PrivateIpAddresses": [
+              {
+                "PrivateIpAddress":  {
+                             "Ref": "InstancePrivateIpAddress"
+                },
+                "Primary": "true"
+              }
+            ],
+            "GroupSet": [
+              {
+                "Ref": "sgdefault"
+              }
+            ],
+            "AssociatePublicIpAddress": "true"
+          }
+        ]
+      }
+    },
+    "sgdefault": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "default VPC security group",
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Dev Default Security Group"
+          }
+        ]
+      }
+    },
+    "acl11": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Egress": "true",
+        "Protocol": "-1",
+        "RuleAction": "allow",
+        "RuleNumber": "100",
+        "NetworkAclId": {
+          "Ref": "aclec356694"
+        }
+      }
+    },
+    "acl12": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Protocol": "-1",
+        "RuleAction": "allow",
+        "RuleNumber": "100",
+        "NetworkAclId": {
+          "Ref": "aclec356694"
+        }
+      }
+    },
+    "subnetacl9": {
+      "Type": "AWS::EC2::SubnetNetworkAclAssociation",
+      "Properties": {
+        "NetworkAclId": {
+          "Ref": "aclec356694"
+        },
+        "SubnetId": {
+          "Ref": "subnet626dc029"
+        }
+      }
+    },
+    "subnetacl10": {
+      "Type": "AWS::EC2::SubnetNetworkAclAssociation",
+      "Properties": {
+        "NetworkAclId": {
+          "Ref": "aclec356694"
+        },
+        "SubnetId": {
+          "Ref": "subneta06682fd"
+        }
+      }
+    },
+    "gw4": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "InternetGatewayId": {
+          "Ref": "igw718e2308"
+        }
+      }
+    },
+    "subnetroute7": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "rtbdc8ce4a6"
+        },
+        "SubnetId": {
+          "Ref": "subneta06682fd"
+        }
+      }
+    },
+    "subnetroute8": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "rtbdc8ce4a6"
+        },
+        "SubnetId": {
+          "Ref": "subnet626dc029"
+        }
+      }
+    },
+    "route8": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "RouteTableId": {
+          "Ref": "rtbdc8ce4a6"
+        },
+        "GatewayId": {
+          "Ref": "igw718e2308"
+        }
+      },
+      "DependsOn": "gw4"
+    },
+    "dchpassoc4": {
+      "Type": "AWS::EC2::VPCDHCPOptionsAssociation",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "DhcpOptionsId": {
+          "Ref": "doptf47a9293"
+        }
+      }
+    },
+    "ingress5": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "sgdefault"
+        },
+        "IpProtocol": "tcp",
+        "FromPort": "22",
+        "ToPort": "22",
+        "CidrIp": "38.79.0.242/32"
+      }
+    },
+    "ingress6": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "sgdefault"
+        },
+        "IpProtocol": "tcp",
+        "FromPort": "443",
+        "ToPort": "443",
+        "CidrIp": "38.79.0.242/32"
+      }
+    },
+    "egress3": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "sgdefault"
+        },
+        "IpProtocol": "-1",
+        "CidrIp": "0.0.0.0/0"
+      }
+    }
+  },
+  "Description": ""
+}
